@@ -1,0 +1,633 @@
+/*
+ * Code from: USRP - Universal Software Radio Peripheral (GNU Radio)
+ *
+ * Initial modifications by:
+ *
+ * Stephan Esterhuizen, Aerospace Engineering Sciences
+ * University of Colorado at Boulder
+ * Boulder CO, USA
+ *
+ * Further modifications for use with the SiGe USB module to accompany
+ * the textbook: "A Software-Defined GPS and Galileo Receiver: A
+ * Single-Frequency Approach" by Kai Borre, Dennis Akos, et.al. by:
+ *
+ * Marcus Junered, GNSS Research Group
+ * Lulea University of Technology
+ * Lulea, Sweden
+ *
+ * Further review and modifications of user interface has been made by:
+ *
+ * Jonas Lindstrom
+ * Lulea University of Technology
+ * Lulea, Sweden
+ *
+ * http://ccar.colorado.edu/gnss
+ *
+ *  Furthur modifications integrating 4120 devices have been made by:
+ *
+ *  Marcus Wilkerson
+ *  University of Colorado, Boulder
+ *  Boulder, CO, USA
+ *
+ *  Some minor changes were made by
+ *
+ *  Oscar Isoz
+ *  University of Colorado, Boulder
+ *  Boulder, CO, USA
+ *
+ * Change Documentation (2/2008 - 5/2008)
+ * --------------------------------------
+ * - MW - Added PID array variable for SiGe 4120 GPS Front End
+ * - MW - Fixed a bug if LIBUSB found more devices on the bus and gave
+ *        each device a different index number. It was hardcoded to "1" before.
+ * - MW - Added check for 4120 module in usb_fx2_find fcn
+ * - MW - If 4120, use I/Q values of -1 and +1 instead of -1,-3,+1,+3 as with
+ *        4110 modules. This is in main().
+ * - OI - Changed the user interface
+ *
+ * ---------------------------------------------------------------------
+ *
+ * GN3S - GNSS IF Streamer for Windows
+ * Copyright (C) 2006 Marcus Junered
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+ #include "main.h"
+
+ using namespace std;
+
+ // Entry of main function
+ int main(int argc, char *argv[])
+ {
+ 	bool b_overrun = false; 		//	buffer overrun flag
+ 	bool b_RFI = false;
+ 	char cp_filename[64];			//	data file name
+ 	char cp_agc_filename[64];		//	agc data file name (when agc_on = 1)
+ 	char version;					//	version of modules
+ 	unsigned char uc_flags[5];
+
+ 	/*  Control Variable */
+ 	int i_col_mode = 32;			//	Data collection mode, default value is 32
+ 	int i_AGC = 1;					//
+ 	int i_col_time = 0;
+ 	int i_tmp = 0;
+ 	int i_ch = -1;					//	Command parameter buffer;
+ 	int i_decimate = 1;
+ 	int i_RFI_det = 0;
+ 	/*  State variable */
+ 	unsigned int ui_agc_count = 0;	//	AGC data collected size
+ 	unsigned int ui_pack = 1;		//	Pack mode
+ 	unsigned int ui_time_to_collect = 2;//	Data collection time
+ 	unsigned int agc_on = 0;		//	AGC logging on/off flag
+
+ 	unsigned int ul_buf_size = 1048576*32;
+ 	unsigned int ul_agc_buf_size = 320;
+ 	unsigned int ul_num_bytes_written = 0;
+
+ 	bool b_run = true;				//	Main loop control variable
+ 	unsigned int k = 0;				//	Main loop numbers
+ 	unsigned int ui_agc_tot = 0;	//
+ 	unsigned int ui_agc_buf_pos = 0;//
+
+ 	float ul_kmax;					//  Size of data buffered
+ 	timeval tv_max, tv_now, tv_start;
+
+
+ 	/*	Clear date file name */
+ 	strcpy(cp_agc_filename," ");
+ 	strcpy(cp_filename," ");
+
+ 	/*	Timer	*/
+ 	timeval st_cpu_time;
+ 	string  str;
+ 	/*	Device */
+ 	Fx2_dev	fx2_d = Fx2_dev(0);
+
+ 	/************************* Look for a device*****************************/
+ 	fx2_d = Fx2_dev(0);		//	Looking for device with PID 0x0b38
+ 	if (fx2_d.usb_fx2_find() != 0)
+ 	{
+ 		version = 0;
+ 	}
+ 	else
+ 	{
+ 		fx2_d = Fx2_dev(2);	//	Looking for device with PID 0x0b3a
+ 		if (fx2_d.usb_fx2_find() != 0)
+ 		{
+ 			version = 1;
+ 		}
+ 		else
+ 		{
+ 			fx2_d = Fx2_dev(3);     // Looking for device with PID 0x0b3f
+ 			if(fx2_d.usb_fx2_find()!=0)
+ 			{
+ 				version = 2;
+ 			}
+ 			else
+ 			{
+ 				printf("\t no GNSS frontend found\n");
+ 				return(0);
+ 				fx2_d.close();
+ 			}
+ 		}
+ 	}
+ 	/************************ Display the help information according to PID of module **************/
+ 	if (version == 0)
+ 	{
+ 		while ( (i_ch = getopt (argc,argv,"ho:s:")) != EOF )
+ 		{
+ 			switch(i_ch)
+ 			{
+ 				case 'h':	// help
+ 					help_lv();
+ 					return 0;
+ 				case 's':	// size(sec)
+ 					sscanf(optarg, "%u", &ui_time_to_collect);
+ 					break;
+ 				case 'o':	// filename
+ 					strcpy(cp_filename, optarg);
+ 					i_tmp = strlen(optarg);
+ 					if (i_tmp>4)
+	                {
+	                    memcpy(cp_agc_filename,(const char*)optarg,(i_tmp-2));
+
+	                    memcpy((cp_agc_filename+i_tmp-4),"_agc.bin\0",sizeof("_agc.bin\0"));
+	                }
+	                else
+	                {
+	                    strcpy(cp_agc_filename,"test_agc.bin");
+	                }
+	                break;
+	             default:
+	             	break;
+ 			}
+ 		}
+ 	}
+ 	else if (version == 1 )
+ 	{
+ 		while ( (i_ch = getopt ( argc, argv, "ho:s:c:" )) != EOF )
+ 		{
+ 			switch(i_ch)
+ 			{
+ 				case 'h':	// help
+ 					help_hv(1);
+ 					return 0;
+ 					break;
+ 				case 's':	// size(sec)
+ 					sscanf(optarg,"%u", &ui_time_to_collect);
+ 					break;
+ 				case 'o':	// file name
+ 					strcpy(cp_filename, optarg);
+ 					i_tmp = strlen(optarg);
+ 					if (i_tmp>4)
+	                {
+	                    memcpy(cp_agc_filename,(const char*)optarg,(i_tmp-2));
+
+	                    memcpy((cp_agc_filename+i_tmp-4),"_agc.bin\0",sizeof("_agc.bin\0"));
+	                }
+	                else
+	                {
+	                    strcpy(cp_agc_filename,"test_agc.bin");
+	                }
+	                break;
+	             case 'c':
+	             	sscanf(optarg, "%u", &i_tmp);
+	             	switch(i_tmp)
+	             	{
+	             		case 1: i_col_mode = 32; break;
+	             		case 2: i_col_mode = 36; break;
+	             		case 3: i_col_mode = 38; break;
+	             		case 4: i_col_mode = 42; break;
+	             		case 5: i_col_mode = 132; break;
+	             		case 6: i_col_mode = 136; break;
+	             		case 7: i_col_mode = 138; break;
+	             		case 8: i_col_mode = 142; break;
+	             		default: break;
+	             	}
+	             	break;
+	             default:
+	             	break;
+ 			}
+ 		}
+ 	}
+ 	else if (version == 2)
+ 	{
+ 		while ( (i_ch = getopt ( argc, argv, "ho:s:b:c:p:d:a:" )) != EOF )
+ 		{
+ 			switch(i_ch)
+ 			{
+ 				case 'h':	// help
+ 					help_hv(version);
+ 					return 0;
+ 					break;
+ 				case 's':	// data size (sec)
+ 					sscanf(optarg, "%u", &ui_time_to_collect);
+ 					break;
+ 				case 'o':	// data filename
+ 					strcpy(cp_filename, optarg);
+ 					i_tmp = strlen(optarg);
+ 					if (i_tmp>4)
+	                {
+	                    memcpy(cp_agc_filename,(const char*)optarg,(i_tmp-2));
+
+	                    memcpy((cp_agc_filename+i_tmp-4),"_agc.bin\0",sizeof("_agc.bin\0"));
+	                }
+	                else
+	                {
+	                    strcpy(cp_agc_filename,"test_agc.bin");
+	                }
+	                break;
+	            case 'c':	// data collection mode
+	            	sscanf(optarg, "%u", &i_tmp);
+	             	switch(i_tmp)
+	             	{
+	             		case 1: i_col_mode = 32; break;
+	             		case 2: i_col_mode = 36; break;
+	             		case 3: i_col_mode = 38; break;
+	             		case 4: i_col_mode = 42; break;
+	             		case 5: i_col_mode = 132; break;
+	             		case 6: i_col_mode = 136; break;
+	             		case 7: i_col_mode = 138; break;
+	             		case 8: i_col_mode = 142; break;
+	             		default: break;
+	             	}
+	             	break;
+	             case 'p':	// Pack data, not supported by this firmware
+	             	sscanf(optarg,"%u",&ui_pack);
+	                if (!(ui_pack==4 ||(ui_pack==2)||(ui_pack==1)))
+	                {
+	                    printf("Wrong value, value has to be 1,2 or 4\n");
+	                    return(-1);
+	                }
+	                break;
+	             case 'd':	// Decimate data
+	             	sscanf(optarg, "%u", &i_decimate);
+	             	break;
+	             case 'a':	// AGC logging on/off
+	             	sscanf(optarg, "%u", &agc_on);
+	             	break;
+	             default:
+	             	break;
+ 			}
+ 		}
+ 	}
+ 	else
+ 	{
+ 		return 0;
+ 	}
+ 	/***********************  Create init file *******************************************/
+ 	if (strlen(cp_filename)<2)
+    {
+        strcpy(cp_filename, "test.bin");
+        strcpy(cp_agc_filename,"test_agc.bin");
+    }
+    FileSaver fs = FileSaver(cp_filename);
+    fs.open_file(cp_filename);
+    fs.set_fid(1);
+    fs.set_decimate(i_decimate);
+    fs.set_pack(ui_pack);
+
+    FileSaver fs_agc =FileSaver(cp_agc_filename);
+    fs_agc.open_file(cp_agc_filename);
+    fs_agc.set_fid(100);
+    fs_agc.set_pack(1);
+    fs_agc.set_decimate(1);
+
+
+    if(agc_on == 0)
+    {
+        fs_agc.close_file();
+    	DeleteFile(cp_agc_filename);
+    }
+    /*****************************INIT USB **********************************/
+    fx2_d.usb_fx2_init();
+    if((version == 2)&&(agc_on == 1))
+    {
+    	fx2_d.usrp_xfer (VRQ_AGC,i_AGC);
+    }
+    else
+    {
+        fx2_d.usrp_xfer (VRQ_AGC,0);
+    }
+    fx2_d.usrp_xfer (VRQ_CMODE,132 );
+    fx2_d.usrp_xfer (VRQ_XFER, 0 );
+
+    fx2_d.usrp_xfer (VRQ_XFER, 1);
+    fx2_d.usrp_xfer2(VRQ_FLAGS, 0, uc_flags, 5);
+    fx2_d.usrp_xfer (VRQ_XFER, 0 );
+    /******************************INIT Buffers ************************/
+    short *shp_agc_data;
+    short *shp_agc_data_store;
+    char  *ch_if_data;
+    timeval tv;
+
+    fs.set_decimate(i_decimate);
+    // Allocate buffer
+    ch_if_data = new char[BUFSIZE];
+    shp_agc_data = new short[100];
+    // Initiate buffer
+    for(int t = 0; t< 100; t++)
+    {
+    	shp_agc_data[t] = 0;
+    }
+    for(int t = 0; t<BUFSIZE; t++)
+    {
+    	ch_if_data[t] = 0;
+    }
+    // Set up the Timer
+    tv_max.tv_sec = i_col_time;
+    gettimeofday(&tv_start,NULL);
+
+    fx2_d.usrp_xfer(VRQ_CMODE, i_col_mode);
+    fx2_d.usrp_xfer(VRQ_XFER, 1);
+    gettimeofday(&tv_max,NULL);
+
+    if((version == 2)&&(agc_on == 1))
+    {
+    	fx2_d.usrp_xfer(VRQ_AGC,2);
+    }
+    gettimeofday(&tv_now,NULL);
+
+    int j = 0;		// Buffer data collected in each loop
+    int currK = 0;
+    float percentage = 0.0;
+    //	Cursor
+    HANDLE hStdout;
+    hStdout   =   GetStdHandle(STD_OUTPUT_HANDLE);
+    COORD	coord;
+    CONSOLE_SCREEN_BUFFER_INFO bInfo;
+
+    while(b_run)
+    {
+    	// Time control
+    	if ((tv_now.tv_sec+tv_now.tv_usec/1e6) - (tv_start.tv_sec+tv_start.tv_usec/1e6) >= ui_time_to_collect)
+    	{
+    		// Set the current cursor to the right position
+    		SetConsoleCursorPosition(hStdout,  bInfo.dwCursorPosition);
+    		printf("%3.0f%% data collected",100.0);
+    		b_run = false;
+    	}
+    	// Print capture information at the start
+    	if(k==0)
+    	{
+    		printf("\n");
+    		switch(i_col_mode)
+    		{
+    			case 32:
+    				ul_kmax = 16.368 * ui_time_to_collect/i_decimate;
+    				printf("Attemping to collect %dsecs/%.1fMB of data\n",ui_time_to_collect,ul_kmax);
+    				break;
+    			case 36:
+    				ul_kmax = 8.184 * ui_time_to_collect/i_decimate;
+    				printf("Attemping to collect %dsecs/%.1fMB of data\n",ui_time_to_collect,ul_kmax);
+    				break;
+    			case 38:
+    				ul_kmax = 5.456 * ui_time_to_collect/i_decimate;
+    				printf("Attemping to collect %dsecs/%.1fMB of data\n",ui_time_to_collect,ul_kmax);
+    				break;
+    			case 42:
+    				ul_kmax = 4.092 * ui_time_to_collect/i_decimate;
+    				printf("Attemping to collect %dsecs/%.1fMB of data\n",ui_time_to_collect,ul_kmax);
+    				break;
+    			case 132:
+    				ul_kmax = 16.368 * ui_time_to_collect/i_decimate;
+    				printf("Attemping to collect %dsecs/%.1fMB of data\n",ui_time_to_collect,ul_kmax);
+    				break;
+    			case 136:
+    				ul_kmax = 8.184 * ui_time_to_collect/i_decimate;
+    				printf("Attemping to collect %dsecs/%.1fMB of data\n",ui_time_to_collect,ul_kmax);
+    				break;
+    			case 138:
+    				ul_kmax = 5.456 * ui_time_to_collect/i_decimate;
+    				printf("Attemping to collect %dsecs/%.1fMB of data\n",ui_time_to_collect,ul_kmax);
+    				break;
+    			case 142:
+    				ul_kmax = 4.092 * ui_time_to_collect/i_decimate;
+    				printf("Attemping to collect %dsecs/%.1fMB of data\n",ui_time_to_collect,ul_kmax);
+    				break;
+    			default:
+    				break;
+    		}
+    		// Get the current cursor position
+    		GetConsoleScreenBufferInfo(hStdout, &bInfo);
+    		// Set the current cursor to the right position
+    		SetConsoleCursorPosition(hStdout,  bInfo.dwCursorPosition);
+            printf("%3.0f%% date collected\n",1.0);
+    	}
+
+    	k++;
+    	//	Print progress information
+    	if ((k%250)==0)
+    	{
+    		// Set the current cursor to the right position
+            SetConsoleCursorPosition(hStdout,  bInfo.dwCursorPosition);
+            switch(i_col_mode)
+            {
+            	case 32:
+                    if ((k%1000) == 0)
+                    {
+                        percentage = k/10/ui_time_to_collect;
+                        (percentage>1)?printf("%3.0f%% date collected\n",percentage):printf("%3.0f%% date collected\n",1.0);
+                    }
+                    break;
+                case 36:
+                    if ((k%500) == 0)
+                    {
+                        percentage = k/10*2/ui_time_to_collect;
+                        (percentage>1)?printf("%3.0f%% date collected\n",percentage):printf("%3.0f%% date collected\n",1.0);
+                    }
+                	break;
+                case 38:
+                	percentage = k/10*3/ui_time_to_collect;
+                	(percentage>1)?printf("%3.0f%% date collected\n",percentage):printf("%3.0f%% date collected\n",1.0);
+                	break;
+                case 42:
+                	percentage = k/10*4/ui_time_to_collect;
+                	(percentage>1)?printf("%3.0f%% date collected\n",percentage):printf("%3.0f%% date collected\n",1.0);
+                	break;
+               	case 132:
+                    if ((k%1000) == 0)
+                    {
+                        percentage = k/10/ui_time_to_collect;
+                        (percentage>1)?printf("%3.0f%% date collected\n",percentage):printf("%3.0f%% date collected\n",1.0);
+                    }
+                    break;
+                case 136:
+                    if ((k%500) == 0)
+                    {
+                        percentage = k/10*2/ui_time_to_collect;
+                        (percentage>1)?printf("%3.0f%% date collected\n",percentage):printf("%3.0f%% date collected\n",1.0);
+                    }
+                	break;
+                case 138:
+                	percentage = k/10*3/ui_time_to_collect;
+                	(percentage>1)?printf("%3.0f%% date collected\n",percentage):printf("%3.0f%% date collected\n",1.0);
+                	break;
+                case 142:
+                	percentage = k/10*4/ui_time_to_collect;
+                	(percentage>1)?printf("%3.0f%% date collected\n",percentage):printf("%3.0f%% date collected\n",1.0);
+                	break;
+                default:
+                	break;
+            }
+    	}
+    	//	Check buffer overrun
+    	fx2_d.check_rx_overrun (&b_overrun );
+    	if ( b_overrun==true )
+    	{
+    		gettimeofday(&tv_now,NULL);
+    		printf("Buffer Overrun!\n");
+    		delete []ch_if_data;
+            delete []shp_agc_data;
+            if(agc_on == 1)
+            {
+                fs_agc.close_file();
+            }
+            fs.close_file();
+            switch(i_col_mode)
+            {
+                case 32: currK = int(k/1000);break;
+                case 36: currK = int(k/1000*2);break;
+                case 38: currK = int(k/1000*3);break;
+                case 42: currK = int(k/1000*4);break;
+                case 132: currK = int(k/1000); break;
+                case 136: currK = int(k/1000*2);break;
+                case 138: currK = int(k/1000*3);break;
+                case 142: currK = int(k/1000*4);break;
+                default: break;
+            }
+    		printf("%dsec/%dMB data collected\n",currK,(int)(ul_num_bytes_written/1e6));
+    		fs_agc.close_file();
+            DeleteFile(cp_agc_filename);
+            fx2_d.close();
+            fx2_d.~Fx2_dev();
+            return(EXIT_FAILURE);
+    	}
+    	//	AGC data
+    	if ((k==0)&&(version == 2)&&(agc_on == 1))
+    	{
+    		fx2_d.usrp_xfer ( VRQ_AGC, 1);
+            fx2_d.usrp_xfer ( VRQ_AGC, 2);
+            fx2_d.usrp_xfer2(VRQ_FLAGS, 0, uc_flags, 5);
+            fx2_d.usrp_xfer ( VRQ_AGC, 2);
+            ui_agc_count = 0;
+    	}
+    	else if ((k%60 == 0 && k >20)&&(version == 2)&&(agc_on == 1))
+        {
+
+            fx2_d.read_AGC(shp_agc_data, &b_RFI, &i_RFI_det, &ui_agc_count);
+            fx2_d.usrp_xfer ( VRQ_AGC, 2);
+            if (ui_agc_count > 0)
+            {
+                ui_agc_buf_pos= ui_agc_buf_pos+ui_agc_count;
+                fs_agc.save_data(shp_agc_data,ui_agc_count);
+            }
+            ui_agc_count = 0;
+        }
+        //	Read data
+        j = fx2_d.read_IF(ch_if_data);
+        if ((j>0))
+        {
+            ul_num_bytes_written +=j;				//	Number of data collection update
+            fs.save_data(ch_if_data,j,i_col_mode);	//	Write data buffered to disc
+
+        }
+        //	Get current time
+        gettimeofday(&tv_now,NULL);
+    }
+    gettimeofday(&tv_now,NULL);
+    printf("\n");
+    // To modify
+    std::cout<<"Total time = "<< (float)((tv_now.tv_sec+tv_now.tv_usec/1e6) - (tv_start.tv_sec+tv_start.tv_usec/1e6))+(tv_now.tv_usec-tv_start.tv_usec)/1e6<<"s"<<endl;
+    std::cout<<"Data size = "<<ul_num_bytes_written/1e6<<"MB"<<std::endl;
+    std::cout<<"Average speed = "<< (ul_num_bytes_written/((float)(tv_now.tv_sec - tv_start.tv_sec+(tv_now.tv_usec-tv_start.tv_usec)/1e6)))/1e6<<"MB/s"<<endl;
+    gettimeofday(&tv_max,NULL);
+
+    if ((version == 2)&&(agc_on == 1))
+    {
+        fx2_d.read_AGC(shp_agc_data,  &b_RFI, &i_RFI_det, &ui_agc_count);
+        fx2_d.usrp_xfer ( VRQ_AGC, 2);
+        if (ui_agc_count > 0)
+        {
+            ui_agc_buf_pos= ui_agc_buf_pos+ui_agc_count;
+            fs_agc.save_data(shp_agc_data,ui_agc_count);
+        }
+        fx2_d.usrp_xfer ( VRQ_AGC, 0);
+    }
+
+    delete []shp_agc_data;
+    delete []ch_if_data;
+
+    if(agc_on == 1)
+    {
+        printf("%d bytes of AGC data stored in ",ui_agc_buf_pos);
+        printf(cp_agc_filename);
+        printf("\n");
+        fs_agc.close_file();
+    }
+    fs.close_file();
+    if (agc_on == 0)
+    {
+        DeleteFile(cp_agc_filename);
+    }
+    fx2_d.~Fx2_dev();
+    fx2_d.close();
+    fx2_d.~Fx2_dev();
+    printf("success!\n");
+
+    return 0;
+ }
+
+ /* Help screen for PID 0X0B38 */
+ void help_lv(void)
+{
+    printf ( "\n");
+    printf ( "**************************************************************************\n" );
+    printf ( "* -o filename  : output file name                                        *\n" );
+    printf ( "* -s filesize  : Number of sec to collect                                *\n" );
+    printf ( "* -h           : help screen                                             *\n" );
+    printf ( "**************************************************************************\n" );
+    printf ( "\n" );
+}
+
+/* Help screen for PID 0x0b3a and 0x0b3f */
+void help_hv(char version)
+{
+     printf ("\n");
+     printf ( "****************************************************************************\n" );
+     printf ( "*   Mode#   *    BW   *    Sample rate    *     Format      *      IF      *\n");
+     printf ( "*     1     *  narrow *     16.368MHz     *    2-bit real   *   4.092MHz   *\n");
+     printf ( "*     2     *  narrow *      8.184MHz     *    4-bit I/Q    *       0MHz   *\n");
+     printf ( "*     3     *  narrow *      5.456MHz     *    2-bit real   *   1.364MHz   *\n");
+     printf ( "*     4     *  narrow *      4.092MHz     *    4-bit I/Q    *       0MHz   *\n");
+     printf ( "*     5     *   wide  *     16.368MHz     *    2-bit real   *   4.092MHz   *\n");
+     printf ( "*     6     *   wide  *      8.184MHz     *    4-bit I/Q    *       0MHz   *\n");
+     printf ( "*     7     *   wide  *      5.456MHz     *    2-bit real   *   1.364MHz   *\n");
+     printf ( "*     8     *   wide  *      4.092MHz     *    4-bit I/Q    *       0MHz   *\n");
+     printf ( "****************************************************************************\n");
+     printf ( "* -o filename  : output file name               default: test.bin          *\n");
+     printf ( "* -s filesize  : Number of sec to collect       default: 2 sec             *\n");
+     printf ( "* -c mode      : collection mode                default: 1                 *\n");
+     if(version == 2)
+     {
+         printf ( "* -p [1,2,4]   : pack 1,2,4 samples per byte    default: 1                 *\n");
+         printf ( "* -d n         : save only every [n] byte       default: 1                 *\n");
+         printf ( "* -a agc       : agc on - 1; agc off - 0        default: 0                 *\n");
+     }
+     printf ( "* -h           : help screen                                               *\n");
+     printf ( "****************************************************************************\n" );
+     printf ( "\n" );
+}

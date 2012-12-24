@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="gn3s" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/gn3s" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/gn3s" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add option="-fexceptions" />
+		</Compiler>
+		<Unit filename="ERR.depend" />
+		<Unit filename="Makefile" />
+		<Unit filename="cir_buf.cpp" />
+		<Unit filename="cir_buf.h" />
+		<Unit filename="driver-dependence/descriptors.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="driver-dependence/error.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="driver-dependence/error.h" />
+		<Unit filename="driver-dependence/linux.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="driver-dependence/linux.h" />
+		<Unit filename="driver-dependence/usb.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="driver-dependence/usbi.h" />
+		<Unit filename="filesaver.cpp" />
+		<Unit filename="filesaver.h" />
+		<Unit filename="fusb.cc" />
+		<Unit filename="fusb.h" />
+		<Unit filename="fusb_linux.cc" />
+		<Unit filename="fusb_linux.h" />
+		<Unit filename="fusb_sysconfig_linux.cc" />
+		<Unit filename="fx2.cpp" />
+		<Unit filename="fx2.h" />
+		<Unit filename="gn3s.depend" />
+		<Unit filename="main.cpp" />
+		<Unit filename="main.cpp.OLD" />
+		<Unit filename="main.h" />
+		<Unit filename="usrp_bytesex.h" />
+		<Unit filename="usrp_prims.h" />
+		<Unit filename="usrp_slots.h" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

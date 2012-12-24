@@ -1,0 +1,436 @@
+# depslib dependency file v1.0
+1350316260 source:/mnt/dev/POLITECNICO/PI_GRESSION/Gn3s_FRONTEND/00_LINUX/gn3s/main.cpp
+	"main.h"
+
+1349181566 /mnt/dev/POLITECNICO/PI_GRESSION/Gn3s_FRONTEND/00_LINUX/gn3s/main.h
+	<ostream>
+	<sstream>
+	<iostream>
+	"filesaver.h"
+	"fx2.h"
+	<vector>
+	<stdio.h>
+	<string>
+	<iostream>
+	<getopt.h>
+	<ctype.h>
+	<stdio.h>
+	<stdlib.h>
+	<unistd.h>
+	<sys/types.h>
+	<sys/time.h>
+
+1316288012 /mnt/dev/POLITECNICO/PI_GRESSION/Gn3s_FRONTEND/00_LINUX/gn3s/filesaver.h
+	<stdio.h>
+	<iostream>
+	<fcntl.h>
+	<fstream>
+	<fstream>
+	<stdio.h>
+	<stdlib.h>
+
+1350314056 /mnt/dev/POLITECNICO/PI_GRESSION/Gn3s_FRONTEND/00_LINUX/gn3s/fx2.h
+	<sys/time.h>
+	<time.h>
+	<stdexcept>
+	<stdio.h>
+	<string.h>
+	<vector>
+	<math.h>
+	<usb.h>
+	<errno.h>
+	"fusb.h"
+	"fusb_linux.h"
+	"usrp_bytesex.h"
+	"usrp_prims.h"
+	"filesaver.h"
+
+1204755158 /mnt/dev/POLITECNICO/PI_GRESSION/Gn3s_FRONTEND/00_LINUX/gn3s/fusb.h
+
+1348667508 /mnt/dev/POLITECNICO/PI_GRESSION/Gn3s_FRONTEND/00_LINUX/gn3s/fusb_linux.h
+	"fusb.h"
+	<list>
+
+1282434866 /mnt/dev/POLITECNICO/PI_GRESSION/Gn3s_FRONTEND/00_LINUX/gn3s/usrp_bytesex.h
+	<byteswap.h>
+
+1219685730 /mnt/dev/POLITECNICO/PI_GRESSION/Gn3s_FRONTEND/00_LINUX/gn3s/usrp_prims.h
+	"usrp_slots.h"
+	<string>
+
+1145484238 /mnt/dev/POLITECNICO/PI_GRESSION/Gn3s_FRONTEND/00_LINUX/gn3s/usrp_slots.h
+
+1348770826 source:/mnt/dev/POLITECNICO/PI_GRESSION/Gn3s_FRONTEND/00_LINUX/gn3s/fusb_sysconfig_linux.cc
+	"fusb.h"
+	"fusb_linux.h"
+
+1342693194 source:/mnt/dev/POLITECNICO/PI_GRESSION/Gn3s_FRONTEND/00_LINUX/gn3s/driver-dependence/descriptors.c
+	<stdio.h>
+	<string.h>
+	<stdint.h>
+	"usbi.h"
+
+1342693194 /mnt/dev/POLITECNICO/PI_GRESSION/Gn3s_FRONTEND/00_LINUX/gn3s/driver-dependence/usbi.h
+	"usb.h"
+	"error.h"
+
+1200939046 /mnt/dev/POLITECNICO/PI_GRESSION/Gn3s_FRONTEND/00_LINUX/gn3s/driver-dependence/error.h
+
+1342693194 source:/mnt/dev/POLITECNICO/PI_GRESSION/Gn3s_FRONTEND/00_LINUX/gn3s/driver-dependence/usb.c
+	<stdlib.h>
+	<stdio.h>
+	<string.h>
+	<errno.h>
+	"usbi.h"
+
+1349168772 source:/mnt/dev/POLITECNICO/PI_GRESSION/Gn3s_FRONTEND/00_LINUX/gn3s/driver-dependence/linux.c
+	<stdlib.h>
+	<unistd.h>
+	<string.h>
+	<stdio.h>
+	<fcntl.h>
+	<errno.h>
+	<sys/time.h>
+	<dirent.h>
+	"linux.h"
+	"usbi.h"
+
+1342693192 /mnt/dev/POLITECNICO/PI_GRESSION/Gn3s_FRONTEND/00_LINUX/gn3s/driver-dependence/linux.h
+	<unistd.h>
+	<sys/stat.h>
+	<sys/ioctl.h>
+
+1200939046 source:/mnt/dev/POLITECNICO/PI_GRESSION/Gn3s_FRONTEND/00_LINUX/gn3s/driver-dependence/error.c
+	<errno.h>
+	<string.h>
+	"usb.h"
+	"error.h"
+
+1348771894 source:/mnt/dev/POLITECNICO/PI_GRESSION/Gn3s_FRONTEND/00_LINUX/gn3s/fusb_linux.cc
+	"config.h"
+	"fusb_linux.h"
+	<usb.h>
+	<stdexcept>
+	<linux/compiler.h>
+	<linux/usbdevice_fs.h>
+	<sys/ioctl.h>
+	<assert.h>
+	<algorithm>
+	<errno.h>
+	<string.h>
+	<stdio.h>
+
+1215976496 source:/mnt/dev/POLITECNICO/PI_GRESSION/Gn3s_FRONTEND/00_LINUX/gn3s/fusb.cc
+	"config.h"
+	"fusb.h"
+
+1317153086 source:/mnt/dev/POLITECNICO/PI_GRESSION/Gn3s_FRONTEND/00_LINUX/gn3s/filesaver.cpp
+	"filesaver.h"
+
+1350314085 source:/mnt/dev/POLITECNICO/PI_GRESSION/Gn3s_FRONTEND/00_LINUX/gn3s/cir_buf.cpp
+	"cir_buf.h"
+
+1316181260 /mnt/dev/POLITECNICO/PI_GRESSION/Gn3s_FRONTEND/00_LINUX/gn3s/cir_buf.h
+	<stdio.h>
+	<string.h>
+	<vector>
+	<math.h>
+	"filesaver.h"
+	<stdio.h>
+	<iostream>
+	<fstream>
+	<fcntl.h>
+
+1350315119 source:/mnt/dev/POLITECNICO/PI_GRESSION/Gn3s_FRONTEND/00_LINUX/gn3s/fx2.cpp
+	"fx2.h"
+
+1350314085 source:/mnt/nfs/Share/gn3s/cir_buf.cpp
+	"cir_buf.h"
+
+1316181260 /mnt/nfs/Share/gn3s/cir_buf.h
+	<stdio.h>
+	<string.h>
+	<vector>
+	<math.h>
+	"filesaver.h"
+	<stdio.h>
+	<iostream>
+	<fstream>
+	<fcntl.h>
+
+1316288012 /mnt/nfs/Share/gn3s/filesaver.h
+	<stdio.h>
+	<iostream>
+	<fcntl.h>
+	<fstream>
+	<fstream>
+	<stdio.h>
+	<stdlib.h>
+
+1342693194 source:/mnt/nfs/Share/gn3s/driver-dependence/descriptors.c
+	<stdio.h>
+	<string.h>
+	<stdint.h>
+	"usbi.h"
+
+1342693194 /mnt/nfs/Share/gn3s/driver-dependence/usbi.h
+	"usb.h"
+	"error.h"
+
+1200939046 /mnt/nfs/Share/gn3s/driver-dependence/error.h
+
+1200939046 source:/mnt/nfs/Share/gn3s/driver-dependence/error.c
+	<errno.h>
+	<string.h>
+	"usb.h"
+	"error.h"
+
+1349168772 source:/mnt/nfs/Share/gn3s/driver-dependence/linux.c
+	<stdlib.h>
+	<unistd.h>
+	<string.h>
+	<stdio.h>
+	<fcntl.h>
+	<errno.h>
+	<sys/time.h>
+	<dirent.h>
+	"linux.h"
+	"usbi.h"
+
+1342693192 /mnt/nfs/Share/gn3s/driver-dependence/linux.h
+	<unistd.h>
+	<sys/stat.h>
+	<sys/ioctl.h>
+
+1342693194 source:/mnt/nfs/Share/gn3s/driver-dependence/usb.c
+	<stdlib.h>
+	<stdio.h>
+	<string.h>
+	<errno.h>
+	"usbi.h"
+
+1350322323 source:/mnt/nfs/Share/gn3s/filesaver.cpp
+	"filesaver.h"
+
+1215976496 source:/mnt/nfs/Share/gn3s/fusb.cc
+	"config.h"
+	"fusb.h"
+
+1204755158 /mnt/nfs/Share/gn3s/fusb.h
+
+1348771894 source:/mnt/nfs/Share/gn3s/fusb_linux.cc
+	"config.h"
+	"fusb_linux.h"
+	<usb.h>
+	<stdexcept>
+	<linux/compiler.h>
+	<linux/usbdevice_fs.h>
+	<sys/ioctl.h>
+	<assert.h>
+	<algorithm>
+	<errno.h>
+	<string.h>
+	<stdio.h>
+
+1348667508 /mnt/nfs/Share/gn3s/fusb_linux.h
+	"fusb.h"
+	<list>
+
+1348770826 source:/mnt/nfs/Share/gn3s/fusb_sysconfig_linux.cc
+	"fusb.h"
+	"fusb_linux.h"
+
+1350322399 source:/mnt/nfs/Share/gn3s/fx2.cpp
+	"fx2.h"
+
+1350314056 /mnt/nfs/Share/gn3s/fx2.h
+	<sys/time.h>
+	<time.h>
+	<stdexcept>
+	<stdio.h>
+	<string.h>
+	<vector>
+	<math.h>
+	<usb.h>
+	<errno.h>
+	"fusb.h"
+	"fusb_linux.h"
+	"usrp_bytesex.h"
+	"usrp_prims.h"
+	"filesaver.h"
+
+1282434866 /mnt/nfs/Share/gn3s/usrp_bytesex.h
+	<byteswap.h>
+
+1219685730 /mnt/nfs/Share/gn3s/usrp_prims.h
+	"usrp_slots.h"
+	<string>
+
+1145484238 /mnt/nfs/Share/gn3s/usrp_slots.h
+
+1350322283 source:/mnt/nfs/Share/gn3s/main.cpp
+	"main.h"
+
+1349181566 /mnt/nfs/Share/gn3s/main.h
+	<ostream>
+	<sstream>
+	<iostream>
+	"filesaver.h"
+	"fx2.h"
+	<vector>
+	<stdio.h>
+	<string>
+	<iostream>
+	<getopt.h>
+	<ctype.h>
+	<stdio.h>
+	<stdlib.h>
+	<unistd.h>
+	<sys/types.h>
+	<sys/time.h>
+
+1350314084 source:/home/giuse/Scaricati/gn3s/cir_buf.cpp
+	"cir_buf.h"
+
+1316181260 /home/giuse/Scaricati/gn3s/cir_buf.h
+	<stdio.h>
+	<string.h>
+	<vector>
+	<math.h>
+	"filesaver.h"
+	<stdio.h>
+	<iostream>
+	<fstream>
+	<fcntl.h>
+
+1316288012 /home/giuse/Scaricati/gn3s/filesaver.h
+	<stdio.h>
+	<iostream>
+	<fcntl.h>
+	<fstream>
+	<fstream>
+	<stdio.h>
+	<stdlib.h>
+
+1342693194 source:/home/giuse/Scaricati/gn3s/driver-dependence/descriptors.c
+	<stdio.h>
+	<string.h>
+	<stdint.h>
+	"usbi.h"
+
+1350900382 /home/giuse/Scaricati/gn3s/driver-dependence/usbi.h
+	"usb.h"
+	"error.h"
+
+1200939046 /home/giuse/Scaricati/gn3s/driver-dependence/error.h
+
+1200939046 source:/home/giuse/Scaricati/gn3s/driver-dependence/error.c
+	<errno.h>
+	<string.h>
+	"usb.h"
+	"error.h"
+
+1342693194 source:/home/giuse/Scaricati/gn3s/driver-dependence/usb.c
+	<stdlib.h>
+	<stdio.h>
+	<string.h>
+	<errno.h>
+	"usbi.h"
+
+1350322322 source:/home/giuse/Scaricati/gn3s/filesaver.cpp
+	"filesaver.h"
+
+1215976496 source:/home/giuse/Scaricati/gn3s/fusb.cc
+	"config.h"
+	"fusb.h"
+
+1204755158 /home/giuse/Scaricati/gn3s/fusb.h
+
+1348771894 source:/home/giuse/Scaricati/gn3s/fusb_linux.cc
+	"config.h"
+	"fusb_linux.h"
+	<usb.h>
+	<stdexcept>
+	<linux/compiler.h>
+	<linux/usbdevice_fs.h>
+	<sys/ioctl.h>
+	<assert.h>
+	<algorithm>
+	<errno.h>
+	<string.h>
+	<stdio.h>
+
+1348667508 /home/giuse/Scaricati/gn3s/fusb_linux.h
+	"fusb.h"
+	<list>
+
+1348770826 source:/home/giuse/Scaricati/gn3s/fusb_sysconfig_linux.cc
+	"fusb.h"
+	"fusb_linux.h"
+
+1351507976 source:/home/giuse/Scaricati/gn3s/fx2.cpp
+	"fx2.h"
+
+1350314056 /home/giuse/Scaricati/gn3s/fx2.h
+	<sys/time.h>
+	<time.h>
+	<stdexcept>
+	<stdio.h>
+	<string.h>
+	<vector>
+	<math.h>
+	<usb.h>
+	<errno.h>
+	"fusb.h"
+	"fusb_linux.h"
+	"usrp_bytesex.h"
+	"usrp_prims.h"
+	"filesaver.h"
+
+1282434866 /home/giuse/Scaricati/gn3s/usrp_bytesex.h
+	<byteswap.h>
+
+1219685730 /home/giuse/Scaricati/gn3s/usrp_prims.h
+	"usrp_slots.h"
+	<string>
+
+1145484238 /home/giuse/Scaricati/gn3s/usrp_slots.h
+
+1351509296 source:/home/giuse/Scaricati/gn3s/main.cpp
+	"main.h"
+
+1349181566 /home/giuse/Scaricati/gn3s/main.h
+	<ostream>
+	<sstream>
+	<iostream>
+	"filesaver.h"
+	"fx2.h"
+	<vector>
+	<stdio.h>
+	<string>
+	<iostream>
+	<getopt.h>
+	<ctype.h>
+	<stdio.h>
+	<stdlib.h>
+	<unistd.h>
+	<sys/types.h>
+	<sys/time.h>
+
+1351148810 source:/home/giuse/Scaricati/gn3s/driver-dependence/linux.c
+	<stdlib.h>
+	<unistd.h>
+	<string.h>
+	<stdio.h>
+	<fcntl.h>
+	<errno.h>
+	<sys/time.h>
+	<dirent.h>
+	"linux.h"
+	"usbi.h"
+
+1342693192 /home/giuse/Scaricati/gn3s/driver-dependence/linux.h
+	<unistd.h>
+	<sys/stat.h>
+	<sys/ioctl.h>
+

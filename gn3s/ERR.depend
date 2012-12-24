@@ -1,0 +1,157 @@
+# depslib dependency file v1.0
+1348770826 source:/home/giuse/MAIL_B/ERR/fusb_sysconfig_linux.cc
+	"fusb.h"
+	"fusb_linux.h"
+
+1204755158 /home/giuse/MAIL_B/ERR/fusb.h
+
+1348667509 /home/giuse/MAIL_B/ERR/fusb_linux.h
+	"fusb.h"
+	<list>
+
+1317153086 source:/home/giuse/MAIL_B/ERR/filesaver.cpp
+	"filesaver.h"
+
+1316288013 /home/giuse/MAIL_B/ERR/filesaver.h
+	<stdio.h>
+	<iostream>
+	<fcntl.h>
+	<fstream>
+	<fstream>
+	<stdio.h>
+	<stdlib.h>
+
+1348771416 source:/home/giuse/MAIL_B/ERR/main.cpp
+	"main.h"
+
+1348770727 /home/giuse/MAIL_B/ERR/main.h
+	<ostream>
+	<sstream>
+	<iostream>
+	"filesaver.h"
+	"fx2.h"
+	<vector>
+	<stdio.h>
+	<string>
+	<iostream>
+	<getopt.h>
+	<ctype.h>
+	<stdio.h>
+	<stdlib.h>
+	<unistd.h>
+	<sys/types.h>
+	<sys/time.h>
+
+1348828238 /home/giuse/MAIL_B/ERR/fx2.h
+	<sys/time.h>
+	<time.h>
+	<stdexcept>
+	<stdio.h>
+	<string.h>
+	<vector>
+	<math.h>
+	<usb.h>
+	<errno.h>
+	"fusb.h"
+	"fusb_linux.h"
+	"usrp_bytesex.h"
+	"usrp_prims.h"
+	"filesaver.h"
+
+1348825481 /home/giuse/MAIL_B/ERR/usb.h
+	<unistd.h>
+	<stdlib.h>
+	<limits.h>
+	<dirent.h>
+
+1282434866 /home/giuse/MAIL_B/ERR/usrp_bytesex.h
+	<byteswap.h>
+
+1219685730 /home/giuse/MAIL_B/ERR/usrp_prims.h
+	"usrp_slots.h"
+	<string>
+
+1145484238 /home/giuse/MAIL_B/ERR/usrp_slots.h
+
+1348771895 source:/home/giuse/MAIL_B/ERR/fusb_linux.cc
+	"config.h"
+	"fusb_linux.h"
+	<usb.h>
+	<stdexcept>
+	<linux/compiler.h>
+	<linux/usbdevice_fs.h>
+	<sys/ioctl.h>
+	<assert.h>
+	<algorithm>
+	<errno.h>
+	<string.h>
+	<stdio.h>
+
+1215976496 source:/home/giuse/MAIL_B/ERR/fusb.cc
+	"config.h"
+	"fusb.h"
+
+1348851329 source:/home/giuse/MAIL_B/ERR/fx2.cpp
+	"fx2.h"
+
+1342693192 /home/giuse/MAIL_B/ERR/libusb/linux.h
+	<unistd.h>
+	<sys/stat.h>
+	<sys/ioctl.h>
+
+1219355614 source:/home/giuse/MAIL_B/ERR/cir_buf.cpp
+	"cir_buf.h"
+
+1316181260 /home/giuse/MAIL_B/ERR/cir_buf.h
+	<stdio.h>
+	<string.h>
+	<vector>
+	<math.h>
+	"filesaver.h"
+	<stdio.h>
+	<iostream>
+	<fstream>
+	<fcntl.h>
+
+1349168773 source:/home/giuse/MAIL_B/ERR/driver-dependence/linux.c
+	<stdlib.h>
+	<unistd.h>
+	<string.h>
+	<stdio.h>
+	<fcntl.h>
+	<errno.h>
+	<sys/time.h>
+	<dirent.h>
+	"linux.h"
+	"usbi.h"
+
+1342693192 /home/giuse/MAIL_B/ERR/driver-dependence/linux.h
+	<unistd.h>
+	<sys/stat.h>
+	<sys/ioctl.h>
+
+1342693194 /home/giuse/MAIL_B/ERR/driver-dependence/usbi.h
+	"usb.h"
+	"error.h"
+
+1200939046 /home/giuse/MAIL_B/ERR/driver-dependence/error.h
+
+1200939046 source:/home/giuse/MAIL_B/ERR/driver-dependence/error.c
+	<errno.h>
+	<string.h>
+	"usb.h"
+	"error.h"
+
+1342693194 source:/home/giuse/MAIL_B/ERR/driver-dependence/descriptors.c
+	<stdio.h>
+	<string.h>
+	<stdint.h>
+	"usbi.h"
+
+1342693194 source:/home/giuse/MAIL_B/ERR/driver-dependence/usb.c
+	<stdlib.h>
+	<stdio.h>
+	<string.h>
+	<errno.h>
+	"usbi.h"
+
