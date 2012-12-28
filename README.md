@@ -1,7 +1,7 @@
-* Politecnico di torino, REflectometry projcet.       *
-* Dipartimento elettronica, remote sensing.           *
-* giuseppe.tipaldi@studenti.polito.it alias Ciusss89. *
-* TIPALDI GIUSEPPE 21/12/2012.                        *
+# Politecnico di torino, REflectometry projcet.       
+* Dipartimento elettronica, remote sensing.           
+* giuseppe.tipaldi@studenti.polito.it alias Ciusss89. 
+* TIPALDI GIUSEPPE 21/12/2012.                        
 
 How compile and install gn3s binary applications: 
    - Go in to gn3s dir:
